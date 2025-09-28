@@ -17,7 +17,6 @@ class PokedexApp extends StatelessWidget {
   }
 }
 
-//////////////////////////// MAIN SCREEN ////////////////////////////
 class PokedexHomeScreen extends StatelessWidget {
   const PokedexHomeScreen({super.key});
 
@@ -30,10 +29,7 @@ class PokedexHomeScreen extends StatelessWidget {
       body: SafeArea(
         child: LayoutBuilder(
           builder: (context, constraints) {
-            // Адаптивная ширина «колонки» приложения
             final double contentMaxW = constraints.maxWidth.clamp(360.0, 560.0);
-
-            // Высота контейнера = вся доступная высота (минус внешние паддинги)
             final double contentH = constraints.maxHeight;
 
             return Align(
@@ -59,7 +55,6 @@ class PokedexHomeScreen extends StatelessWidget {
                       ),
                       child: Column(
                         children: [
-                          // Header
                           Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                             child: Row(
@@ -79,22 +74,16 @@ class PokedexHomeScreen extends StatelessWidget {
                             ),
                           ),
                           const Divider(height: 1),
-
-                          // Grid адаптивная
                           Expanded(
                             child: LayoutBuilder(
                               builder: (context, gridCons) {
-                                // Внутренние отступы сетки (как в макете)
                                 const double hPad = 16;
                                 const double vPad = 12;
                                 const double spacing = 12;
 
                                 final double gridW = gridCons.maxWidth - hPad * 2;
-                                // Желаемая ширина карточки ~124 пикс → считаем колонки
                                 int crossCount = (gridW / 124).floor().clamp(2, 4);
-                                // Реальная ширина тайла с учётом промежутков
                                 final double tileW = (gridW - spacing * (crossCount - 1)) / crossCount;
-                                // Пропорция карточки (чуть выше, чем шире)
                                 final double tileH = tileW * 1.18;
 
                                 return GridView.builder(
@@ -115,8 +104,8 @@ class PokedexHomeScreen extends StatelessWidget {
                                           context,
                                           MaterialPageRoute(
                                             builder: (_) => PokemonDetailScreen(
-                                              all: items,   // <-- весь список
-                                              index: i,     // <-- текущий индекс
+                                              all: items,
+                                              index: i,
                                             ),
                                           ),
                                         );
@@ -165,7 +154,6 @@ class _SortChip extends StatelessWidget {
   }
 }
 
-//////////////////////////// CARD ////////////////////////////
 class PokemonCard extends StatelessWidget {
   final Pokemon p;
   const PokemonCard(this.p, {super.key});
@@ -175,7 +163,7 @@ class PokemonCard extends StatelessWidget {
     final c = typeColor(p.types.isNotEmpty ? p.types.first : '');
     const radius = 14.0;
     const borderW = 2.0;
-    const nameBarH = 30.0; // высота нижней плашки с именем
+    const nameBarH = 30.0;
 
     return Container(
       decoration: BoxDecoration(
@@ -190,10 +178,9 @@ class PokemonCard extends StatelessWidget {
           ),
         ],
       ),
-      clipBehavior: Clip.antiAlias, // важно для «слияния» низа
+      clipBehavior: Clip.antiAlias,
       child: Stack(
         children: [
-          // № в правом верхнем
           Positioned(
             top: 6,
             right: 8,
@@ -206,25 +193,19 @@ class PokemonCard extends StatelessWidget {
               ),
             ),
           ),
-
-          // Блок картинки: вся область над плашкой имени
           Positioned.fill(
-            top: 10,              // небольшой верхний отступ как в макете
+            top: 10,
             left: 6,
             right: 6,
-            bottom: nameBarH + 8, // оставить место под плашку
+            bottom: nameBarH + 8,
             child: FittedBox(
               fit: BoxFit.contain,
               child: Image.network(
                 p.imageUrl,
-                // размеров не задаём — FittedBox сам отмасштабирует
-                errorBuilder: (_, __, ___) =>
-                const Icon(Icons.image_not_supported, size: 28),
+                errorBuilder: (_, __, ___) => const Icon(Icons.image_not_supported, size: 28),
               ),
             ),
           ),
-
-          // Нижняя плашка-«островок» (сливается с рамкой)
           Positioned(
             left: 0,
             right: 0,
@@ -238,7 +219,6 @@ class PokemonCard extends StatelessWidget {
                   bottomRight: Radius.circular(12),
                 ),
               ),
-              // фон делаем цветом типа, как в фигме
               child: Container(
                 height: nameBarH,
                 alignment: Alignment.center,
@@ -268,8 +248,6 @@ class PokemonCard extends StatelessWidget {
   }
 }
 
-//////////////////////////// DETAIL ////////////////////////////
-// ---------------- DETAIL with left/right navigation ----------------
 class PokemonDetailScreen extends StatefulWidget {
   final List<Pokemon> all;
   final int index;
@@ -329,17 +307,14 @@ class _PokemonDetailScreenState extends State<PokemonDetailScreen> {
                       final imgSize = w * 0.50;
                       final overlap = 64.0;
                       final contentTop = headerH - overlap;
-
-                      // сколько части изображения «заезжает» внутрь панели
                       final imageInsidePanel = imgSize * 0.45;
                       final panelTopPadding = 20 + imageInsidePanel + 8;
 
                       return SizedBox(
-                        height: contentH - 32, // минус внешние паддинги
+                        height: contentH - 32,
                         child: Stack(
                           clipBehavior: Clip.none,
                           children: [
-                            // Шапка
                             Container(
                               height: headerH,
                               decoration: BoxDecoration(
@@ -348,7 +323,6 @@ class _PokemonDetailScreenState extends State<PokemonDetailScreen> {
                               ),
                               child: Stack(
                                 children: [
-                                  // back
                                   Positioned(
                                     left: 12,
                                     top: 8,
@@ -357,7 +331,6 @@ class _PokemonDetailScreenState extends State<PokemonDetailScreen> {
                                       icon: const Icon(Icons.arrow_back_ios_new, color: Colors.white),
                                     ),
                                   ),
-                                  // title
                                   Positioned(
                                     left: 56,
                                     top: 14,
@@ -373,7 +346,6 @@ class _PokemonDetailScreenState extends State<PokemonDetailScreen> {
                                       ),
                                     ),
                                   ),
-                                  // #id
                                   Positioned(
                                     top: 20,
                                     right: 16,
@@ -386,7 +358,6 @@ class _PokemonDetailScreenState extends State<PokemonDetailScreen> {
                                       ),
                                     ),
                                   ),
-                                  // watermark
                                   Positioned(
                                     right: 12,
                                     top: headerH * 0.22,
@@ -396,8 +367,6 @@ class _PokemonDetailScreenState extends State<PokemonDetailScreen> {
                                       color: Colors.white.withOpacity(.18),
                                     ),
                                   ),
-
-                                  // ← стрелка (лево)
                                   Positioned(
                                     left: 8,
                                     top: headerH * 0.55,
@@ -408,7 +377,6 @@ class _PokemonDetailScreenState extends State<PokemonDetailScreen> {
                                       onTap: _goPrev,
                                     ),
                                   ),
-                                  // → стрелка (право)
                                   Positioned(
                                     right: 8,
                                     top: headerH * 0.55,
@@ -422,8 +390,6 @@ class _PokemonDetailScreenState extends State<PokemonDetailScreen> {
                                 ],
                               ),
                             ),
-
-                            // Белая панель
                             Positioned(
                               top: contentTop,
                               left: 0,
@@ -440,7 +406,6 @@ class _PokemonDetailScreenState extends State<PokemonDetailScreen> {
                                   child: Column(
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
-                                      // Типы
                                       Row(
                                         mainAxisAlignment: MainAxisAlignment.center,
                                         children: pokemon.types
@@ -451,8 +416,6 @@ class _PokemonDetailScreenState extends State<PokemonDetailScreen> {
                                             .toList(),
                                       ),
                                       const SizedBox(height: 16),
-
-                                      // About
                                       Center(
                                         child: Text(
                                           'About',
@@ -460,8 +423,6 @@ class _PokemonDetailScreenState extends State<PokemonDetailScreen> {
                                         ),
                                       ),
                                       const SizedBox(height: 12),
-
-                                      // Вес / Рост / Умения
                                       Row(
                                         children: [
                                           Expanded(
@@ -490,14 +451,11 @@ class _PokemonDetailScreenState extends State<PokemonDetailScreen> {
                                         ],
                                       ),
                                       const SizedBox(height: 16),
-
                                       Text(
                                         pokemon.flavorText,
                                         style: TextStyle(color: Colors.grey.shade700, height: 1.45, fontSize: 14),
                                       ),
                                       const SizedBox(height: 20),
-
-                                      // Base Stats
                                       Center(
                                         child: Text(
                                           'Base Stats',
@@ -505,20 +463,17 @@ class _PokemonDetailScreenState extends State<PokemonDetailScreen> {
                                         ),
                                       ),
                                       const SizedBox(height: 10),
-
-                                      _StatRow(label: 'HP',   value: pokemon.stats['hp']  ?? 0, color: c, track: faded),
-                                      _StatRow(label: 'ATK',  value: pokemon.stats['atk'] ?? 0, color: c, track: faded),
-                                      _StatRow(label: 'DEF',  value: pokemon.stats['def'] ?? 0, color: c, track: faded),
+                                      _StatRow(label: 'HP', value: pokemon.stats['hp'] ?? 0, color: c, track: faded),
+                                      _StatRow(label: 'ATK', value: pokemon.stats['atk'] ?? 0, color: c, track: faded),
+                                      _StatRow(label: 'DEF', value: pokemon.stats['def'] ?? 0, color: c, track: faded),
                                       _StatRow(label: 'SATK', value: pokemon.stats['spa'] ?? 0, color: c, track: faded),
                                       _StatRow(label: 'SDEF', value: pokemon.stats['spd'] ?? 0, color: c, track: faded),
-                                      _StatRow(label: 'SPD',  value: pokemon.stats['spe'] ?? 0, color: c, track: faded),
+                                      _StatRow(label: 'SPD', value: pokemon.stats['spe'] ?? 0, color: c, track: faded),
                                     ],
                                   ),
                                 ),
                               ),
                             ),
-
-                            // Большая картинка
                             Positioned(
                               top: contentTop - imgSize * 0.55,
                               left: 0,
@@ -551,7 +506,6 @@ class _PokemonDetailScreenState extends State<PokemonDetailScreen> {
   }
 }
 
-// Небольшая кнопка-стрелка (как в макете)
 class _NavArrow extends StatelessWidget {
   final AxisDirection direction;
   final Color color;
@@ -567,9 +521,7 @@ class _NavArrow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final icon = direction == AxisDirection.left
-        ? Icons.chevron_left
-        : Icons.chevron_right;
+    final icon = direction == AxisDirection.left ? Icons.chevron_left : Icons.chevron_right;
 
     return IgnorePointer(
       ignoring: !enabled,
@@ -591,8 +543,6 @@ class _NavArrow extends StatelessWidget {
   }
 }
 
-
-//////////////////////////// UI HELPERS ////////////////////////////
 class _TypeChipSolid extends StatelessWidget {
   final String label;
   final Color color;
@@ -607,7 +557,7 @@ class _TypeChipSolid extends StatelessWidget {
         borderRadius: BorderRadius.circular(20),
       ),
       child: Text(
-        label,                                   // <-- текст больше не пустой
+        label,
         style: const TextStyle(
           color: Colors.white,
           fontWeight: FontWeight.w800,
@@ -618,8 +568,6 @@ class _TypeChipSolid extends StatelessWidget {
   }
 }
 
-// Если хочешь белый текст на сплошном цвете — вариант выше был пустым.
-// Исправляем:
 class _TypeChip extends StatelessWidget {
   final String label;
   final Color color;
@@ -660,7 +608,7 @@ class _InfoTile extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          if (icon != null) ...[        // ← рисуем только если задана
+          if (icon != null) ...[
             Icon(icon!, size: 20, color: Colors.grey.shade700),
             const SizedBox(height: 6),
           ],
@@ -682,7 +630,7 @@ class _InfoTile extends StatelessWidget {
 
 class _StatRow extends StatelessWidget {
   final String label;
-  final int value; // 0..100
+  final int value;
   final Color color;
   final Color track;
   const _StatRow({required this.label, required this.value, required this.color, required this.track});
@@ -733,7 +681,6 @@ class _StatRow extends StatelessWidget {
   }
 }
 
-//////////////////////////// MODEL & DATA ////////////////////////////
 class Pokemon {
   final int id;
   final String name;
@@ -792,10 +739,8 @@ final _pokemon = <Pokemon>[
     id: 1,
     name: 'Bulbasaur',
     types: ['Grass', 'Poison'],
-    imageUrl:
-    'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/1.png',
-    flavorText:
-    'A strange seed was planted on its back at birth. The plant sprouts and grows with this Pokémon.',
+    imageUrl: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/1.png',
+    flavorText: 'A strange seed was planted on its back at birth. The plant sprouts and grows with this Pokémon.',
     height: 0.7,
     weight: 6.9,
     abilities: ['Overgrow', 'Chlorophyll'],
@@ -805,10 +750,8 @@ final _pokemon = <Pokemon>[
     id: 4,
     name: 'Charmander',
     types: ['Fire'],
-    imageUrl:
-    'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/4.png',
-    flavorText:
-    'Obviously prefers hot places. When it rains, steam is said to spout from the tip of its tail.',
+    imageUrl: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/4.png',
+    flavorText: 'Obviously prefers hot places. When it rains, steam is said to spout from the tip of its tail.',
     height: 0.6,
     weight: 8.5,
     abilities: ['Blaze', 'Solar Power'],
@@ -818,10 +761,8 @@ final _pokemon = <Pokemon>[
     id: 7,
     name: 'Squirtle',
     types: ['Water'],
-    imageUrl:
-    'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/7.png',
-    flavorText:
-    'After birth, its back swells and hardens into a shell. Powerfully sprays foam from its mouth.',
+    imageUrl: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/7.png',
+    flavorText: 'After birth, its back swells and hardens into a shell. Powerfully sprays foam from its mouth.',
     height: 0.5,
     weight: 9.0,
     abilities: ['Torrent', 'Rain Dish'],
@@ -831,10 +772,8 @@ final _pokemon = <Pokemon>[
     id: 12,
     name: 'Butterfree',
     types: ['Bug', 'Flying'],
-    imageUrl:
-    'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/12.png',
-    flavorText:
-    'In battle, it flaps its wings at high speed to release highly toxic dust into the air.',
+    imageUrl: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/12.png',
+    flavorText: 'In battle, it flaps its wings at high speed to release highly toxic dust into the air.',
     height: 1.1,
     weight: 32.0,
     abilities: ['Compound Eyes', 'Tinted Lens'],
@@ -844,8 +783,7 @@ final _pokemon = <Pokemon>[
     id: 25,
     name: 'Pikachu',
     types: ['Electric'],
-    imageUrl:
-    'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/25.png',
+    imageUrl: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/25.png',
     flavorText:
     'Pikachu that can generate powerful electricity have cheek sacs that are extra soft and super stretchy.',
     height: 0.4,
@@ -857,8 +795,7 @@ final _pokemon = <Pokemon>[
     id: 92,
     name: 'Gastly',
     types: ['Ghost', 'Poison'],
-    imageUrl:
-    'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/92.png',
+    imageUrl: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/92.png',
     flavorText:
     'A being that exists as a thin gas. It can topple an Indian elephant by enveloping the prey in two seconds.',
     height: 1.3,
@@ -870,8 +807,7 @@ final _pokemon = <Pokemon>[
     id: 132,
     name: 'Ditto',
     types: ['Normal'],
-    imageUrl:
-    'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/132.png',
+    imageUrl: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/132.png',
     flavorText:
     'Capable of copying an enemy’s genetic code to instantly transform itself into a duplicate of the enemy.',
     height: 0.3,
@@ -883,8 +819,7 @@ final _pokemon = <Pokemon>[
     id: 151,
     name: 'Mew',
     types: ['Psychic'],
-    imageUrl:
-    'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/151.png',
+    imageUrl: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/151.png',
     flavorText:
     'So rare that it is still said to be a mirage by many experts. Only a few people have seen it worldwide.',
     height: 0.4,
@@ -896,8 +831,7 @@ final _pokemon = <Pokemon>[
     id: 304,
     name: 'Aron',
     types: ['Steel', 'Rock'],
-    imageUrl:
-    'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/304.png',
+    imageUrl: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/304.png',
     flavorText:
     'It eats iron ore - and sometimes railroad tracks - to build up the steel armor that protects its body.',
     height: 0.4,
